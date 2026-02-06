@@ -28,7 +28,9 @@ public class ShuttleMvt : MonoBehaviour
     public Canvas fuel_canvas;
     private float max_fuel = 100;
     private float current_fuel = 0;
-    private float consumption_rate = 8;
+    private float consumption_rate = 14;
+    public Color NORM_fuel_color;
+    public Color low_fuel_color;
 
     public TextMeshProUGUI speedometer;
     public TextMeshProUGUI Out_of_bounds_time;
@@ -63,6 +65,16 @@ public class ShuttleMvt : MonoBehaviour
         fuel_canvas.transform.position = transform.position;
         //fuel_main.transform.position = Camera.main.WorldToScreenPoint(transform.parent.position);
         //fuel_background.transform.position = Camera.main.WorldToScreenPoint(transform.parent.position);
+        if(current_fuel > 25)
+        {
+            fuel_main.color = NORM_fuel_color;
+
+        }
+        else
+        {
+            fuel_main.color = low_fuel_color;
+        }
+            
 
 
         //print(rb.linearVelocity.magnitude * 10);
@@ -142,7 +154,7 @@ public class ShuttleMvt : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(moveInput != Vector2.zero)
+        if(moveInput != Vector2.zero && current_fuel > 0)
         {
             Vector2 force2add = moveInput * movement_force;
             rb.AddForce(force2add, ForceMode2D.Impulse);
@@ -150,7 +162,7 @@ public class ShuttleMvt : MonoBehaviour
             CameraShakerHandler.Shake(Thrust_shake);
             
         }
-        if(moveInput.y != 0 || moveInput.x != 0)
+        if(moveInput.y != 0 && current_fuel > 0 || moveInput.x != 0 && current_fuel > 0)
         {
             thrust.volume = 1;
         }
@@ -159,7 +171,7 @@ public class ShuttleMvt : MonoBehaviour
             thrust.volume = Mathf.Lerp(thrust.volume, 0, 0.1f);
         }
 
-        if(moveInput.y > 0)
+        if(moveInput.y > 0  && current_fuel > 0)
         {
             thrust_particles[0].Play();
  
@@ -170,7 +182,7 @@ public class ShuttleMvt : MonoBehaviour
             thrust_particles[0].Stop();
 
         }
-        if (moveInput.y < 0)
+        if (moveInput.y < 0 && current_fuel > 0)
         {
             thrust_particles[1].Play();
             
@@ -180,7 +192,7 @@ public class ShuttleMvt : MonoBehaviour
             thrust_particles[1].Stop();
 
         }
-        if (moveInput.x < 0)
+        if (moveInput.x < 0 && current_fuel > 0)
         {
             thrust_particles[3].Play();
 
@@ -191,7 +203,7 @@ public class ShuttleMvt : MonoBehaviour
             thrust_particles[3].Stop();
 
         }
-        if (moveInput.x > 0)
+        if (moveInput.x > 0 && current_fuel > 0)
         {
             thrust_particles[2].Play();
             
@@ -210,7 +222,7 @@ public class ShuttleMvt : MonoBehaviour
         {
             rb.linearVelocity = Vector2.ClampMagnitude(rb.linearVelocity, max_speed);
         }
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButton(0) && current_fuel > 0)
         {
             rb.AddTorque(rotationspeed);
             current_fuel -= consumption_rate * Time.fixedDeltaTime;
@@ -224,7 +236,7 @@ public class ShuttleMvt : MonoBehaviour
             thrust_particles[4].Stop();
 
         }
-        if (Input.GetMouseButton(1))
+        if (Input.GetMouseButton(1) && current_fuel > 0 )
         {
             rb.AddTorque(-rotationspeed);
             current_fuel -= consumption_rate * Time.fixedDeltaTime;
@@ -237,7 +249,7 @@ public class ShuttleMvt : MonoBehaviour
 
         }
         rb.angularVelocity = Mathf.Clamp(rb.angularVelocity, -max_ang_velocity, max_ang_velocity);
-        if(Input.GetMouseButton(1) || Input.GetMouseButton(0))
+        if(Input.GetMouseButton(1) && current_fuel > 0 || Input.GetMouseButton(0) && current_fuel > 0)
         {
             thrust.volume = 1;
         }

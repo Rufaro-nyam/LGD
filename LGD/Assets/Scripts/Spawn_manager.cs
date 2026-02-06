@@ -8,7 +8,7 @@ public class Spawn_manager : MonoBehaviour
     public Transform[] left_side_spawn_positions;
     public Transform[] right_side_spawn_positions;
     public Transform Player;
-    public float current_asteroid_force = 50;
+    private float current_asteroid_force = 5000;
 
     public Transform[] meteor_spawns;
     private float time_between_spawns = 10;
@@ -77,15 +77,18 @@ public class Spawn_manager : MonoBehaviour
         }
         if(Asteroids_drilled >= 15)
         {
-            time_between_spawns = 7;
+            time_between_spawns = 6;
+            current_asteroid_force = 7000;
         }
         if(Asteroids_drilled >= 20)
         {
-            time_between_spawns = 5;
+            time_between_spawns = 4;
+            current_asteroid_force = 9000;
         }
         if (Asteroids_drilled >= 25)
         {
-            time_between_spawns = 3;
+            time_between_spawns = 2;
+            current_asteroid_force = 10000;
         }
     }
 
