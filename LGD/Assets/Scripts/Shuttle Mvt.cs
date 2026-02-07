@@ -4,6 +4,9 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.UI;
 using FirstGearGames.SmoothCameraShaker;
+//using UnityEngine.Rendering.PostProcessing;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 public class ShuttleMvt : MonoBehaviour
 {
@@ -55,6 +58,14 @@ public class ShuttleMvt : MonoBehaviour
     public AudioSource[] speech;
 
     public bool crashed = false;
+
+    public ParticleSystem landing_particles;
+    public ShakeData land_shake;
+    public Volume volume;
+
+
+    public AudioSource lost_gps;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -66,6 +77,11 @@ public class ShuttleMvt : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        volume.profile.TryGet<ChromaticAberration>(out ChromaticAberration chr_abr);
+        if (chr_abr.intensity.value > 0.23f)
+        {
+            chr_abr.intensity.value -= 0.2f * Time.deltaTime;
+        }
         if (!crashed)
         {
             fuel_main.fillAmount = Mathf.Clamp(current_fuel / max_fuel, 0, 1);
@@ -97,15 +113,25 @@ public class ShuttleMvt : MonoBehaviour
             }
 
 
-            if (counting_down && o_o_b_time >= 0)
+            if (counting_down && o_o_b_time >= 0 && crashed == false)
             {
                 Out_of_bounds_time.text = o_o_b_time.ToString("0.00");
                 o_o_b_time -= Time.deltaTime;
                 Bounds_beep_main.volume = 1;
             }
-            else
+            else 
             {
                 Bounds_beep_main.volume = 0;
+
+            }
+            if(o_o_b_time <= 0)
+            {
+                if (lost_gps.isPlaying == false)
+                {
+                    lost_gps.Play();
+                    Bounds_beep_main.volume = 0;
+                    crashed = true;
+                }
             }
 
             moveInput.x = Input.GetAxisRaw("Horizontal");
@@ -148,6 +174,12 @@ public class ShuttleMvt : MonoBehaviour
                         {
                             hit.collider.gameObject.TryGetComponent<Asteroid>(out Asteroid asteroid);
                             asteroid.explode();
+                            volume.profile.TryGet<ChromaticAberration>(out ChromaticAberration chr_abr2);
+                            if (chr_abr2)
+                            {
+                                chr_abr2.intensity.value = 1;
+                            }
+                            
 
                             //current_fuel = max_fuel;
                         }
@@ -292,6 +324,8 @@ public class ShuttleMvt : MonoBehaviour
                     connected_to_asteroid = true;
                     landing_sound.Play();
                     print("CONNECTED");
+                    landing_particles.Play();
+                    CameraShakerHandler.Shake(land_shake);
                 }
             }
         }
@@ -312,9 +346,13 @@ public class ShuttleMvt : MonoBehaviour
 
     private void OnBecameInvisible()
     {
-        print("WARNING : IN DEEP SPACE");
-        Out_of_bounds_time.gameObject.SetActive(true);
-        counting_down = true;
+        if (!crashed)
+        {
+            print("WARNING : IN DEEP SPACE");
+            Out_of_bounds_time.gameObject.SetActive(true);
+            counting_down = true;
+        }
+        
     }
 
     private void OnBecameVisible()

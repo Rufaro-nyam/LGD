@@ -16,8 +16,12 @@ public class Boundary : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        print(collision.gameObject.name + "destroyed");
-        Destroy(collision.gameObject);
+        if(collision.transform.tag != "Player")
+        {
+            print(collision.gameObject.name + "destroyed");
+            Destroy(collision.gameObject);
+        }
+        
 
     }
 }

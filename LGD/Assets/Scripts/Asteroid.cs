@@ -17,10 +17,12 @@ public class Asteroid : MonoBehaviour
     public bool is_10;
     public bool is_15;
     public bool is_20;
+
+    [SerializeField] LeanTweenType easetype;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        LeanTween.scale(gameObject, new Vector3(2, 2, 1), 0.5f).setEase(easetype);
     }
 
     // Update is called once per frame
