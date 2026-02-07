@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 
 public class Spawn_manager : MonoBehaviour
 {
@@ -113,6 +114,20 @@ public class Spawn_manager : MonoBehaviour
                 if (asteroid)
                 {
                     asteroid.enable_meteor(90);
+                    asteroid.is_15 = true;
+
+                    
+                }
+            }
+            else
+            {
+                ast.TryGetComponent<Asteroid>(out Asteroid asteroid);
+                if (asteroid)
+                {
+                    //asteroid.enable_meteor(90);
+                    asteroid.is_10 = true;
+
+
                 }
             }
 
@@ -150,6 +165,20 @@ public class Spawn_manager : MonoBehaviour
                 if (asteroid_go)
                 {
                     asteroid_go.enable_meteor(90);
+                    asteroid_go.is_15 = false;
+                    asteroid_go.is_10 = false;
+                    asteroid_go.is_20 = true;
+                }
+            }
+            else
+            {
+                astr.TryGetComponent<Asteroid>(out Asteroid asteroid_go);
+                if (asteroid_go)
+                {
+                   // asteroid_go.enable_meteor(90);
+                    asteroid_go.is_15 = true;
+                    asteroid_go.is_10 = false;
+                    asteroid_go.is_20 = false;
                 }
             }
 
@@ -188,6 +217,20 @@ public class Spawn_manager : MonoBehaviour
                 if (asteroid_go)
                 {
                     asteroid_go.enable_meteor(90);
+                    asteroid_go.is_15 = false;
+                    asteroid_go.is_10 = false;
+                    asteroid_go.is_20 = true;
+                }
+            }
+            else
+            {
+                astr.TryGetComponent<Asteroid>(out Asteroid asteroid_go);
+                if (asteroid_go)
+                {
+                    //asteroid_go.enable_meteor(90);
+                    asteroid_go.is_15 = true;
+                    asteroid_go.is_10 = false;
+                    asteroid_go.is_20 = false;
                 }
             }
 
@@ -212,6 +255,7 @@ public class Spawn_manager : MonoBehaviour
             rb2d.AddForce(direction * 10f);
             print("spawned meteor");
         }
+
         yield return new WaitForSeconds(time_between_spawns);
         StartCoroutine(spawn_meteor());
     }

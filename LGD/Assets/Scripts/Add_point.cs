@@ -4,6 +4,7 @@ using UnityEngine;
 public class Add_point : MonoBehaviour
 {
     [SerializeField] LeanTweenType easetype;
+    public int score;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -37,7 +38,7 @@ public class Add_point : MonoBehaviour
             player.TryGetComponent<ShuttleMvt>(out ShuttleMvt shtlmvt);
             if (shtlmvt)
             {
-                shtlmvt.add_score(10);
+                shtlmvt.add_score(score);
             }
         }
     }

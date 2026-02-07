@@ -11,6 +11,12 @@ public class Asteroid : MonoBehaviour
     private int rot_speed;
 
     public GameObject score_10;
+    public GameObject score_15;
+    public GameObject score_20;
+
+    public bool is_10;
+    public bool is_15;
+    public bool is_20;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -27,6 +33,8 @@ public class Asteroid : MonoBehaviour
     {
         rot_speed = speed;
         revolving_meteor.SetActive(true);
+        //is_10 = false;
+        //is_15 = true;
     }
 
     public void explode()
@@ -43,12 +51,24 @@ public class Asteroid : MonoBehaviour
         }
         CameraShakerHandler.Shake(exp_data);
         Instantiate(shards, transform.position, Quaternion.identity);
-        Instantiate(score_10, transform.position, Quaternion.identity);
+        
         GameObject spawner = GameObject.FindGameObjectWithTag("SPAWN");
         if (spawner)
         {
             spawner.TryGetComponent<Spawn_manager>(out Spawn_manager spmg);
             spmg.asteroid_down();
+        }
+        if (is_10)
+        {
+            Instantiate(score_10, transform.position, Quaternion.identity);
+        }
+        if (is_15)
+        {
+            Instantiate(score_15, transform.position, Quaternion.identity);
+        }
+        if (is_20)
+        {
+            Instantiate(score_20, transform.position, Quaternion.identity);
         }
         Destroy(gameObject);
 

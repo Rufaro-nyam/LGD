@@ -444,3 +444,8 @@ MonoBehaviour:
   shard_rot: {fileID: 8685588900619119947}
   revolving_meteor: {fileID: 2789974877014051722}
   score_10: {fileID: 8231309891963348619, guid: ba56f54c2f5197a4fbe15238639d0fed, type: 3}
+  score_15: {fileID: 8231309891963348619, guid: 9373746073624d348b1d314165722f5b, type: 3}
+  score_20: {fileID: 8231309891963348619, guid: 88cfe50567d328542b8a5fb838536e53, type: 3}
+  is_10: 0
+  is_15: 0
+  is_20: 0
