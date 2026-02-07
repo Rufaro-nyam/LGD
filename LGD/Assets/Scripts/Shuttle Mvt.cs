@@ -7,6 +7,7 @@ using FirstGearGames.SmoothCameraShaker;
 //using UnityEngine.Rendering.PostProcessing;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
+using System.Collections;
 
 public class ShuttleMvt : MonoBehaviour
 {
@@ -66,6 +67,9 @@ public class ShuttleMvt : MonoBehaviour
 
     public AudioSource lost_gps;
 
+    public GameObject shuttle_explosion;
+
+    public ShakeData death_shake;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -312,6 +316,7 @@ public class ShuttleMvt : MonoBehaviour
                 shuttle_impact.Play();
                 crashed = true;
                 print("CRASHED");
+                StartCoroutine(destroy_ship());
             }
             else
             {
@@ -331,6 +336,7 @@ public class ShuttleMvt : MonoBehaviour
         }
         else
         {
+            StartCoroutine(destroy_ship());
             print("CRASHED");
             crashed = true;
             shuttle_impact.pitch = UnityEngine.Random.RandomRange(1f, 1.25f);
@@ -340,10 +346,23 @@ public class ShuttleMvt : MonoBehaviour
         {
             crashed = true;
             print("obstacle hit");
+            StartCoroutine(destroy_ship());
         }
 
     }
 
+    IEnumerator destroy_ship()
+    {
+        yield return new WaitForSeconds(1);
+        Instantiate(shuttle_explosion, transform.position, Quaternion.identity);
+        CameraShakerHandler.Shake(death_shake);
+        fuel_canvas.gameObject.SetActive(false);
+        foreach(ParticleSystem f in thrust_particles)
+        {
+            f.gameObject.SetActive(false);
+        }
+        gameObject.SetActive(false);
+    }
     private void OnBecameInvisible()
     {
         if (!crashed)
