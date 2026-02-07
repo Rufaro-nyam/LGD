@@ -16262,6 +16262,8 @@ MonoBehaviour:
   land_shake: {fileID: 11400000, guid: 372622d9a24db89489c312ff7530ce44, type: 2}
   volume: {fileID: 1260758912}
   lost_gps: {fileID: 1777354626}
+  shuttle_explosion: {fileID: 7543005397016389801, guid: a16e0b1efbe31e0468a892e4f0d2c4b5, type: 3}
+  death_shake: {fileID: 11400000, guid: 5a507306ba8ea974bb6bf7b4fa783b71, type: 2}
 --- !u!235 &591986550
 WheelJoint2D:
   m_ObjectHideFlags: 0
@@ -17319,7 +17321,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: f632752ae2e87444f95d3e1331a9e22f, type: 3}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
