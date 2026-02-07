@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 7710832455287155376}
   m_Layer: 3
   m_Name: Circle
-  m_TagString: Untagged
+  m_TagString: OBSTACLE
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -443,3 +443,4 @@ MonoBehaviour:
   shards: {fileID: 9077021048852303609, guid: 2acf5c11823a1cc47acfc3158d366da1, type: 3}
   shard_rot: {fileID: 8685588900619119947}
   revolving_meteor: {fileID: 2789974877014051722}
+  score_10: {fileID: 8231309891963348619, guid: ba56f54c2f5197a4fbe15238639d0fed, type: 3}

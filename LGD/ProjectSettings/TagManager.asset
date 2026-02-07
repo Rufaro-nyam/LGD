@@ -8,6 +8,8 @@ TagManager:
   - Gear
   - SHARD
   - SPAWN
+  - OBSTACLE
+  - MAINUI
   layers:
   - Default
   - TransparentFX

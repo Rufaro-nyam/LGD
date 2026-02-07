@@ -37,6 +37,10 @@ public class ShuttleMvt : MonoBehaviour
     public float o_o_b_time = 5f;
     private bool counting_down = false;
 
+    public TextMeshProUGUI Score_text;
+    public int score = 0;
+    public ScoreCount score_count;
+
     public ShakeData Thrust_shake;
     public ParticleSystem[] thrust_particles;
 
@@ -49,6 +53,8 @@ public class ShuttleMvt : MonoBehaviour
     public AudioSource bounds_return;
 
     public AudioSource[] speech;
+
+    public bool crashed = false;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -60,199 +66,207 @@ public class ShuttleMvt : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        fuel_main.fillAmount = Mathf.Clamp(current_fuel / max_fuel, 0, 1);
-        FUEL_RECHARGE.pitch = Mathf.Clamp(FUEL_RECHARGE.pitch, 1, 6);
-        fuel_canvas.transform.position = transform.position;
-        //fuel_main.transform.position = Camera.main.WorldToScreenPoint(transform.parent.position);
-        //fuel_background.transform.position = Camera.main.WorldToScreenPoint(transform.parent.position);
-        if(current_fuel > 25)
+        if (!crashed)
         {
-            fuel_main.color = NORM_fuel_color;
+            fuel_main.fillAmount = Mathf.Clamp(current_fuel / max_fuel, 0, 1);
+            FUEL_RECHARGE.pitch = Mathf.Clamp(FUEL_RECHARGE.pitch, 1, 6);
+            fuel_canvas.transform.position = transform.position;
+            //fuel_main.transform.position = Camera.main.WorldToScreenPoint(transform.parent.position);
+            //fuel_background.transform.position = Camera.main.WorldToScreenPoint(transform.parent.position);
+            if (current_fuel > 25)
+            {
+                fuel_main.color = NORM_fuel_color;
 
-        }
-        else
-        {
-            fuel_main.color = low_fuel_color;
-        }
-            
-
-
-        //print(rb.linearVelocity.magnitude * 10);
-        speedometer.text = rb.linearVelocity.magnitude.ToString("0.0.0");
-        if(rb.linearVelocity.magnitude >= 1.99)
-        {
-            Speed_warning.volume = 1;
-        }
-        else
-        {
-            Speed_warning.volume = 0;
-        }
+            }
+            else
+            {
+                fuel_main.color = low_fuel_color;
+            }
 
 
-        if (counting_down && o_o_b_time >= 0)
-        {
-            Out_of_bounds_time.text = o_o_b_time.ToString("0.00");
-            o_o_b_time -= Time.deltaTime;
-            Bounds_beep_main.volume = 1;
-        }
-        else
-        {
-            Bounds_beep_main.volume = 0;
-        }
+
+            //print(rb.linearVelocity.magnitude * 10);
+            speedometer.text = rb.linearVelocity.magnitude.ToString("0.0.0");
+            if (rb.linearVelocity.magnitude >= 1.99)
+            {
+                Speed_warning.volume = 1;
+            }
+            else
+            {
+                Speed_warning.volume = 0;
+            }
+
+
+            if (counting_down && o_o_b_time >= 0)
+            {
+                Out_of_bounds_time.text = o_o_b_time.ToString("0.00");
+                o_o_b_time -= Time.deltaTime;
+                Bounds_beep_main.volume = 1;
+            }
+            else
+            {
+                Bounds_beep_main.volume = 0;
+            }
 
             moveInput.x = Input.GetAxisRaw("Horizontal");
-        moveInput.y = Input.GetAxisRaw("Vertical");
-        moveInput.Normalize();
+            moveInput.y = Input.GetAxisRaw("Vertical");
+            moveInput.Normalize();
 
-        landing_gear.transform.rotation = transform.rotation;
+            landing_gear.transform.rotation = transform.rotation;
 
-        Vector2 raydirection = transform.up;
-        Vector2 rayorigin = transform.position;
-        RaycastHit2D hit = Physics2D.Raycast(rayorigin, raydirection, ray_length, asteroid_mask);
-        Debug.DrawRay(rayorigin, raydirection * ray_length, Color.red);
+            Vector2 raydirection = transform.up;
+            Vector2 rayorigin = transform.position;
+            RaycastHit2D hit = Physics2D.Raycast(rayorigin, raydirection, ray_length, asteroid_mask);
+            Debug.DrawRay(rayorigin, raydirection * ray_length, Color.red);
 
-        if(hit.collider != null)
-        {
-            landed = true;
-            //print("hit " + hit.collider.name);
-        }
-        else
-        {
-            landed = false;
-        }
-
-        if (connected_to_asteroid)
-        {
-            connection_time += Time.deltaTime;
-            current_fuel = Mathf.Lerp(current_fuel, max_fuel, 0.005f);
-            FUEL_RECHARGE.pitch += Time.deltaTime * 2 ;
-            FUEL_RECHARGE.volume = 1;
-            print(connection_time);
-            if (connection_time >= 3)
+            if (hit.collider != null)
             {
-                FixedJoint2D joint = gameObject.GetComponent<FixedJoint2D>();
-                if (joint != null)
+                landed = true;
+                //print("hit " + hit.collider.name);
+            }
+            else
+            {
+                landed = false;
+            }
+
+            if (connected_to_asteroid)
+            {
+                connection_time += Time.deltaTime;
+                current_fuel = Mathf.Lerp(current_fuel, max_fuel, 0.005f);
+                FUEL_RECHARGE.pitch += Time.deltaTime * 2;
+                FUEL_RECHARGE.volume = 1;
+                print(connection_time);
+                if (connection_time >= 3)
                 {
-                    Destroy(joint);
-                    FUEL_RECHARGE.volume = 0;
-                    FUEL_RECHARGE.pitch = 1;
-                    if (hit.collider != null)
+                    FixedJoint2D joint = gameObject.GetComponent<FixedJoint2D>();
+                    if (joint != null)
                     {
-                        hit.collider.gameObject.TryGetComponent<Asteroid>(out Asteroid asteroid);
-                        asteroid.explode();
-                        
-                        //current_fuel = max_fuel;
+                        Destroy(joint);
+                        FUEL_RECHARGE.volume = 0;
+                        FUEL_RECHARGE.pitch = 1;
+                        if (hit.collider != null)
+                        {
+                            hit.collider.gameObject.TryGetComponent<Asteroid>(out Asteroid asteroid);
+                            asteroid.explode();
+
+                            //current_fuel = max_fuel;
+                        }
+                        connection_time = 0;
+                        connected_to_asteroid = false;
+                        int rand_speech = Random.Range(0, speech.Length);
+                        speech[rand_speech].Play();
                     }
-                    connection_time = 0;
-                    connected_to_asteroid = false;
-                    int rand_speech = Random.Range(0, speech.Length);
-                    speech[rand_speech].Play();
                 }
             }
         }
+
     }
 
     private void FixedUpdate()
     {
-        if(moveInput != Vector2.zero && current_fuel > 0)
+        if (!crashed)
         {
-            Vector2 force2add = moveInput * movement_force;
-            rb.AddForce(force2add, ForceMode2D.Impulse);
-            current_fuel -= consumption_rate * Time.fixedDeltaTime;
-            CameraShakerHandler.Shake(Thrust_shake);
-            
-        }
-        if(moveInput.y != 0 && current_fuel > 0 || moveInput.x != 0 && current_fuel > 0)
-        {
-            thrust.volume = 1;
-        }
-        else
-        {
-            thrust.volume = Mathf.Lerp(thrust.volume, 0, 0.1f);
+            if (moveInput != Vector2.zero && current_fuel > 0)
+            {
+                Vector2 force2add = moveInput * movement_force;
+                rb.AddForce(force2add, ForceMode2D.Impulse);
+                current_fuel -= consumption_rate * Time.fixedDeltaTime;
+                CameraShakerHandler.Shake(Thrust_shake);
+
+            }
+            if (moveInput.y != 0 && current_fuel > 0 || moveInput.x != 0 && current_fuel > 0)
+            {
+                thrust.volume = 1;
+            }
+            else
+            {
+                thrust.volume = Mathf.Lerp(thrust.volume, 0, 0.1f);
+            }
+
+            if (moveInput.y > 0 && current_fuel > 0)
+            {
+                thrust_particles[0].Play();
+
+
+            }
+            else
+            {
+                thrust_particles[0].Stop();
+
+            }
+            if (moveInput.y < 0 && current_fuel > 0)
+            {
+                thrust_particles[1].Play();
+
+            }
+            else
+            {
+                thrust_particles[1].Stop();
+
+            }
+            if (moveInput.x < 0 && current_fuel > 0)
+            {
+                thrust_particles[3].Play();
+
+
+            }
+            else
+            {
+                thrust_particles[3].Stop();
+
+            }
+            if (moveInput.x > 0 && current_fuel > 0)
+            {
+                thrust_particles[2].Play();
+
+            }
+            else
+            {
+                thrust_particles[2].Stop();
+
+            }
+
+            if (Input.GetKey(KeyCode.Space))
+            {
+                //rb.linearVelocity.magnitude = Mathf.Lerp(rb.linearVelocity.magnitude, 0, 0.01f);
+            }
+            if (rb.linearVelocity.magnitude > max_speed)
+            {
+                rb.linearVelocity = Vector2.ClampMagnitude(rb.linearVelocity, max_speed);
+            }
+            if (Input.GetMouseButton(0) && current_fuel > 0)
+            {
+                rb.AddTorque(rotationspeed);
+                current_fuel -= consumption_rate * Time.fixedDeltaTime;
+                CameraShakerHandler.Shake(Thrust_shake);
+                thrust_particles[4].Play();
+
+
+            }
+            else
+            {
+                thrust_particles[4].Stop();
+
+            }
+            if (Input.GetMouseButton(1) && current_fuel > 0)
+            {
+                rb.AddTorque(-rotationspeed);
+                current_fuel -= consumption_rate * Time.fixedDeltaTime;
+                CameraShakerHandler.Shake(Thrust_shake);
+                thrust_particles[5].Play();
+            }
+            else
+            {
+                thrust_particles[5].Stop();
+
+            }
+            rb.angularVelocity = Mathf.Clamp(rb.angularVelocity, -max_ang_velocity, max_ang_velocity);
+            if (Input.GetMouseButton(1) && current_fuel > 0 || Input.GetMouseButton(0) && current_fuel > 0)
+            {
+                thrust.volume = 1;
+            }
         }
 
-        if(moveInput.y > 0  && current_fuel > 0)
-        {
-            thrust_particles[0].Play();
- 
-            
-        }
-        else
-        {
-            thrust_particles[0].Stop();
-
-        }
-        if (moveInput.y < 0 && current_fuel > 0)
-        {
-            thrust_particles[1].Play();
-            
-        }
-        else
-        {
-            thrust_particles[1].Stop();
-
-        }
-        if (moveInput.x < 0 && current_fuel > 0)
-        {
-            thrust_particles[3].Play();
-
-            
-        }
-        else
-        {
-            thrust_particles[3].Stop();
-
-        }
-        if (moveInput.x > 0 && current_fuel > 0)
-        {
-            thrust_particles[2].Play();
-            
-        }
-        else
-        {
-            thrust_particles[2].Stop();
-
-        }
-
-        if (Input.GetKey(KeyCode.Space))
-        {
-            //rb.linearVelocity.magnitude = Mathf.Lerp(rb.linearVelocity.magnitude, 0, 0.01f);
-        }
-        if(rb.linearVelocity.magnitude > max_speed)
-        {
-            rb.linearVelocity = Vector2.ClampMagnitude(rb.linearVelocity, max_speed);
-        }
-        if (Input.GetMouseButton(0) && current_fuel > 0)
-        {
-            rb.AddTorque(rotationspeed);
-            current_fuel -= consumption_rate * Time.fixedDeltaTime;
-            CameraShakerHandler.Shake(Thrust_shake);
-            thrust_particles[4].Play();
-
-            
-        }
-        else
-        {
-            thrust_particles[4].Stop();
-
-        }
-        if (Input.GetMouseButton(1) && current_fuel > 0 )
-        {
-            rb.AddTorque(-rotationspeed);
-            current_fuel -= consumption_rate * Time.fixedDeltaTime;
-            CameraShakerHandler.Shake(Thrust_shake);
-            thrust_particles[5].Play();
-        }
-        else
-        {
-            thrust_particles[5].Stop();
-
-        }
-        rb.angularVelocity = Mathf.Clamp(rb.angularVelocity, -max_ang_velocity, max_ang_velocity);
-        if(Input.GetMouseButton(1) && current_fuel > 0 || Input.GetMouseButton(0) && current_fuel > 0)
-        {
-            thrust.volume = 1;
-        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -264,6 +278,7 @@ public class ShuttleMvt : MonoBehaviour
             {
                 shuttle_impact.pitch = UnityEngine.Random.RandomRange(1f, 1.25f);
                 shuttle_impact.Play();
+                crashed = true;
                 print("CRASHED");
             }
             else
@@ -283,8 +298,14 @@ public class ShuttleMvt : MonoBehaviour
         else
         {
             print("CRASHED");
+            crashed = true;
             shuttle_impact.pitch = UnityEngine.Random.RandomRange(1f, 1.25f);
             shuttle_impact.Play();
+        }
+        if(collision.transform.tag == "OBSTACLE")
+        {
+            crashed = true;
+            print("obstacle hit");
         }
 
     }
@@ -303,6 +324,14 @@ public class ShuttleMvt : MonoBehaviour
         counting_down = false;
         o_o_b_time = 5;
         bounds_return.Play();
+    }
+
+    public void add_score(int score_num)
+    {
+        score_count._value = score;
+        score += score_num;
+        //Score_text.text = score.ToString("0000");
+        score_count.UpdateText(score);
     }
 
 }

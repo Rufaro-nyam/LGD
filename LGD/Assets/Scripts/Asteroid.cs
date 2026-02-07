@@ -9,6 +9,8 @@ public class Asteroid : MonoBehaviour
 
     public GameObject revolving_meteor;
     private int rot_speed;
+
+    public GameObject score_10;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -41,6 +43,7 @@ public class Asteroid : MonoBehaviour
         }
         CameraShakerHandler.Shake(exp_data);
         Instantiate(shards, transform.position, Quaternion.identity);
+        Instantiate(score_10, transform.position, Quaternion.identity);
         GameObject spawner = GameObject.FindGameObjectWithTag("SPAWN");
         if (spawner)
         {
