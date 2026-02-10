@@ -5,10 +5,13 @@ public class Tutorial_canvas : MonoBehaviour
     public GameObject[] slides;
     private int current_slide = 0;
     public GameObject main_menu_stuff;
+    public AudioSource[] speech;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         Reset_slides();
+        int rand_speech = Random.Range(0, speech.Length);
+        speech[rand_speech].Play();
     }
 
     // Update is called once per frame
@@ -25,6 +28,8 @@ public class Tutorial_canvas : MonoBehaviour
         }
         current_slide = 0;
         slides[current_slide].SetActive(true);
+        int rand_speech = Random.Range(0, speech.Length);
+        speech[rand_speech].Play();
     }
     public void next()
     {
@@ -39,6 +44,8 @@ public class Tutorial_canvas : MonoBehaviour
             g.SetActive(false);
         }
         slides[current_slide].SetActive(true);
+        int rand_speech = Random.Range(0, speech.Length);
+        speech[rand_speech].Play();
     }
 
     public void back()

@@ -143,6 +143,7 @@ public class ShuttleMvt : MonoBehaviour
                     lost_gps.Play();
                     Bounds_beep_main.volume = 0;
                     crashed = true;
+                    StartCoroutine(destroy_ship());
                 }
             }
 
