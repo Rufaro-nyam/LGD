@@ -30,11 +30,16 @@ public class ShuttleMvt : MonoBehaviour
     public Image fuel_main;
     //public Image fuel_background;
     public Canvas fuel_canvas;
+    public Canvas dashboard_canvas;
+    public Canvas main_menu_canvas;
     private float max_fuel = 100;
     private float current_fuel = 0;
     private float consumption_rate = 14;
     public Color NORM_fuel_color;
     public Color low_fuel_color;
+
+    public float size_diff = 1.05f;
+    private Vector2 original_size;
 
     public TextMeshProUGUI speedometer;
     public TextMeshProUGUI Out_of_bounds_time;
@@ -70,12 +75,15 @@ public class ShuttleMvt : MonoBehaviour
     public GameObject shuttle_explosion;
 
     public ShakeData death_shake;
+
+    public bool game_started = false;
+    public GameLossCanvas loss_canv;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         current_fuel = max_fuel;
-
+        original_size = fuel_canvas.gameObject.transform.localScale;
     }
 
     // Update is called once per frame
@@ -86,7 +94,7 @@ public class ShuttleMvt : MonoBehaviour
         {
             chr_abr.intensity.value -= 0.2f * Time.deltaTime;
         }
-        if (!crashed)
+        if (!crashed && game_started)
         {
             fuel_main.fillAmount = Mathf.Clamp(current_fuel / max_fuel, 0, 1);
             FUEL_RECHARGE.pitch = Mathf.Clamp(FUEL_RECHARGE.pitch, 1, 6);
@@ -165,7 +173,8 @@ public class ShuttleMvt : MonoBehaviour
                 current_fuel = Mathf.Lerp(current_fuel, max_fuel, 0.005f);
                 FUEL_RECHARGE.pitch += Time.deltaTime * 2;
                 FUEL_RECHARGE.volume = 1;
-                print(connection_time);
+               // print(connection_time);
+                fuel_canvas.transform.localScale = original_size * size_diff;
                 if (connection_time >= 3)
                 {
                     FixedJoint2D joint = gameObject.GetComponent<FixedJoint2D>();
@@ -174,6 +183,8 @@ public class ShuttleMvt : MonoBehaviour
                         Destroy(joint);
                         FUEL_RECHARGE.volume = 0;
                         FUEL_RECHARGE.pitch = 1;
+                        current_fuel = max_fuel;
+                        fuel_canvas.transform.localScale = original_size;
                         if (hit.collider != null)
                         {
                             hit.collider.gameObject.TryGetComponent<Asteroid>(out Asteroid asteroid);
@@ -200,7 +211,7 @@ public class ShuttleMvt : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (!crashed)
+        if (!crashed && game_started)
         {
             if (moveInput != Vector2.zero && current_fuel > 0)
             {
@@ -307,7 +318,7 @@ public class ShuttleMvt : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        print(collision.relativeVelocity.magnitude);
+        //print(collision.relativeVelocity.magnitude);
         if (landed)
         {
             if(collision.relativeVelocity.magnitude > 2)
@@ -361,6 +372,8 @@ public class ShuttleMvt : MonoBehaviour
         {
             f.gameObject.SetActive(false);
         }
+        loss_canv.start_appearence();
+        loss_canv.score = score;
         gameObject.SetActive(false);
     }
     private void OnBecameInvisible()
@@ -389,6 +402,14 @@ public class ShuttleMvt : MonoBehaviour
         score += score_num;
         //Score_text.text = score.ToString("0000");
         score_count.UpdateText(score);
+    }
+
+    public void start_game()
+    {
+        game_started = true;
+        fuel_canvas.gameObject.SetActive(true);
+        dashboard_canvas.gameObject.SetActive(true);
+        main_menu_canvas.gameObject.SetActive(false);
     }
 
 }

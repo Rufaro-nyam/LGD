@@ -3,10 +3,11 @@ using UnityEngine;
 public class Collision_particles_detect : MonoBehaviour
 {
     public ParticleSystem col_part;
+    private AudioSource col_sound;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        col_sound = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -19,5 +20,6 @@ public class Collision_particles_detect : MonoBehaviour
     {
         col_part.transform.position = collision.GetContact(0).point;
         col_part.Play();
+        col_sound.Play();
     }
 }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 
 public class Spawn_manager : MonoBehaviour
@@ -24,7 +25,7 @@ public class Spawn_manager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        spawn_asteroid();
+        //spawn_asteroid();
     }
 
     // Update is called once per frame
@@ -260,5 +261,9 @@ public class Spawn_manager : MonoBehaviour
         StartCoroutine(spawn_meteor());
     }
 
+    public void main_menu()
+    {
+        SceneManager.LoadScene(0);
+    }
 
 }

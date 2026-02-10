@@ -12,6 +12,7 @@ public class ScoreCount : MonoBehaviour
     public int _value;
     public AudioSource point_sound;
     public GameObject score_object;
+    public bool is_game_end = false;
     //public Timer timer;
     public int Value
     {
@@ -98,12 +99,28 @@ public class ScoreCount : MonoBehaviour
             }
         }
         //timer.update_high_score();
-        LeanTween.scale(score_object, new Vector3(0.05f, 0.05f, 1), 0.01f).setOnComplete(reset_size);
-        print("check high score");
+        if (!is_game_end)
+        {
+            LeanTween.scale(score_object, new Vector3(0.05f, 0.05f, 1), 0.01f).setOnComplete(reset_size);
+        }
+        else
+        {
+            LeanTween.scale(score_object, new Vector3(2f, 2f, 2), 0.01f).setOnComplete(reset_size);
+        }
+
+           // print("check high score");
     }
 
     private void reset_size()
     {
-        LeanTween.scale(score_object, new Vector3(0.03f, 0.03f, 1), 0.01f);
+        if (!is_game_end)
+        {
+            LeanTween.scale(score_object, new Vector3(0.03f, 0.03f, 1), 0.01f);
+        }
+        else
+        {
+            LeanTween.scale(score_object, new Vector3(1.43f, 1.43f, 1), 0.01f);
+        }
+        
     }
 }

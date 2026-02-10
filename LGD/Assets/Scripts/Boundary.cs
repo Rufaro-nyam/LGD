@@ -18,7 +18,7 @@ public class Boundary : MonoBehaviour
     {
         if(collision.transform.tag != "Player")
         {
-            print(collision.gameObject.name + "destroyed");
+            //print(collision.gameObject.name + "destroyed");
             Destroy(collision.gameObject);
         }
         
