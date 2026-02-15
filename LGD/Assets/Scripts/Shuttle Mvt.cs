@@ -78,6 +78,15 @@ public class ShuttleMvt : MonoBehaviour
 
     public bool game_started = false;
     public GameLossCanvas loss_canv;
+
+    public Animator anim;
+    bool playing_fast;
+    bool playing_slow;
+
+    public TrailRenderer speed_trail;
+    public GameObject gameplay_ui;
+    public ShuttleMvt me;
+    public GameObject damage_flash;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -110,6 +119,10 @@ public class ShuttleMvt : MonoBehaviour
             {
                 fuel_main.color = low_fuel_color;
             }
+            if(current_fuel <= 0)
+            {
+                StartCoroutine(out_of_gas());
+            }
 
 
 
@@ -118,10 +131,14 @@ public class ShuttleMvt : MonoBehaviour
             if (rb.linearVelocity.magnitude >= 1.99)
             {
                 Speed_warning.volume = 1;
+                anim.Play("spd_speeding");
+                speed_trail.emitting = true;
             }
             else
             {
                 Speed_warning.volume = 0;
+                anim.Play("spd_norm");
+                speed_trail.emitting = false;
             }
 
 
@@ -143,7 +160,7 @@ public class ShuttleMvt : MonoBehaviour
                     lost_gps.Play();
                     Bounds_beep_main.volume = 0;
                     crashed = true;
-                    StartCoroutine(destroy_ship());
+                    StartCoroutine(lost_ship());
                 }
             }
 
@@ -329,6 +346,7 @@ public class ShuttleMvt : MonoBehaviour
                 crashed = true;
                 print("CRASHED");
                 StartCoroutine(destroy_ship());
+                damage_flash.SetActive(true);
             }
             else
             {
@@ -350,6 +368,7 @@ public class ShuttleMvt : MonoBehaviour
         {
             StartCoroutine(destroy_ship());
             print("CRASHED");
+            damage_flash.SetActive(true);
             crashed = true;
             shuttle_impact.pitch = UnityEngine.Random.RandomRange(1f, 1.25f);
             shuttle_impact.Play();
@@ -357,6 +376,7 @@ public class ShuttleMvt : MonoBehaviour
         if(collision.transform.tag == "OBSTACLE")
         {
             crashed = true;
+            damage_flash.SetActive(true);
             print("obstacle hit");
             StartCoroutine(destroy_ship());
         }
@@ -374,8 +394,37 @@ public class ShuttleMvt : MonoBehaviour
             f.gameObject.SetActive(false);
         }
         loss_canv.start_appearence();
+        loss_canv.display_causes(0);
         loss_canv.score = score;
         gameObject.SetActive(false);
+        gameplay_ui.SetActive(false);
+    }
+
+    IEnumerator lost_ship()
+    {
+        yield return new WaitForSeconds(1);
+        lost_gps.Play();
+        loss_canv.start_appearence();
+        loss_canv.display_causes(2);
+        loss_canv.score = score;
+        gameObject.SetActive(false);
+        fuel_canvas.gameObject.SetActive(false);
+        gameplay_ui.SetActive(false);
+    }
+
+    IEnumerator out_of_gas()
+    {
+        yield return new WaitForSeconds(1);
+        crashed = true;
+        lost_gps.Play();
+        loss_canv.start_appearence();
+        loss_canv.display_causes(1);
+        loss_canv.score = score;
+        //gameObject.SetActive(false);
+        //fuel_canvas.gameObject.SetActive(false);
+        gameplay_ui.SetActive(false);
+        this.enabled = false;
+        me.enabled = false;
     }
     private void OnBecameInvisible()
     {

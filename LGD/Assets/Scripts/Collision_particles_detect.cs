@@ -20,6 +20,11 @@ public class Collision_particles_detect : MonoBehaviour
     {
         col_part.transform.position = collision.GetContact(0).point;
         col_part.Play();
-        col_sound.Play();
+        if (col_sound)
+        {
+            col_part.Play();
+            col_sound.Play();
+        }
+        
     }
 }

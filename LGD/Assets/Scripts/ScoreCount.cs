@@ -13,6 +13,7 @@ public class ScoreCount : MonoBehaviour
     public AudioSource point_sound;
     public GameObject score_object;
     public bool is_game_end = false;
+    public GameLossCanvas game_loss;
     //public Timer timer;
     public int Value
     {
@@ -107,8 +108,13 @@ public class ScoreCount : MonoBehaviour
         {
             LeanTween.scale(score_object, new Vector3(2f, 2f, 2), 0.01f).setOnComplete(reset_size);
         }
-
-           // print("check high score");
+        if (is_game_end)
+        {
+            print("score adding complete");
+            game_loss.new_high();
+        }
+        
+         
     }
 
     private void reset_size()

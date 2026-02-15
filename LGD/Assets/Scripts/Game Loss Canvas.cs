@@ -12,19 +12,27 @@ public class GameLossCanvas : MonoBehaviour
     public ScoreCount s_count;
     public GameObject newhighscore;
     public ShakeData shake;
+    bool can_new_high = false;
+
+    public GameObject[] causes;
+    bool can_display = true;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        //now_appear();
-        /*if (PlayerPrefs.HasKey("HIGHSCORE"))
+        if (PlayerPrefs.HasKey("HIGHSCORE"))
         {
-            highscore_text.text = score.ToString();
+            PlayerPrefs.SetInt("HIGHSCORE", 0);
         }
-        else
-        {
-            PlayerPrefs.SetInt("HIGHSCORE", score);
-            highscore_text.text = score.ToString();
-        }*/
+        //now_appear();
+            /*if (PlayerPrefs.HasKey("HIGHSCORE"))
+            {
+                highscore_text.text = score.ToString();
+            }
+            else
+            {
+                PlayerPrefs.SetInt("HIGHSCORE", score);
+                highscore_text.text = score.ToString();
+            }*/
     }
 
     // Update is called once per frame
@@ -33,6 +41,15 @@ public class GameLossCanvas : MonoBehaviour
         
     }
 
+    public void display_causes(int cause)
+    {
+        if (can_display)
+        {
+            causes[cause].SetActive(true);
+            can_display = false;
+        }
+        
+    }
     public void start_appearence()
     {
         StartCoroutine(appear());
@@ -43,6 +60,12 @@ public class GameLossCanvas : MonoBehaviour
     {
         yield return new WaitForSeconds(1);
         now_appear();
+    }
+    
+    private IEnumerator present_high_score()
+    {
+        yield return new WaitForSeconds(1);
+        
     }
 
     public void now_appear()
@@ -60,6 +83,7 @@ public class GameLossCanvas : MonoBehaviour
                 print("new score is greater");
                 PlayerPrefs.SetInt("HIGHSCORE", score);
                 highscore_text.text = PlayerPrefs.GetInt("HIGHSCORE").ToString();
+                can_new_high = true;
                 //newhighscore.SetActive(true);
                 //LeanTween.scale(newhighscore, new Vector3(1.4f, 1.4f, 1f), 0.5f).setEase(easetype).setOnComplete(new_high);
 
@@ -86,6 +110,15 @@ public class GameLossCanvas : MonoBehaviour
 
     public void new_high()
     {
-        CameraShakerHandler.Shake(shake);
+        if (can_new_high)
+        {
+            newhighscore.SetActive(true);
+            CameraShakerHandler.Shake(shake);
+            //CameraShakerHandler.Shake(shake);
+            //StartCoroutine(present_high_score());
+        }
+        
     }
+
+
 }

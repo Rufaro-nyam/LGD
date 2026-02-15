@@ -8,7 +8,8 @@ public class Text_hover : MonoBehaviour
     TMP_Text textMesh;
     public float sin_time = 3.3f;
     public float cos_time = 2.5f;
-
+    public bool is_high_text = false;
+    public GameObject me;
     Mesh mesh;
 
     Vector3[] vertices;
@@ -17,6 +18,10 @@ public class Text_hover : MonoBehaviour
     void Start()
     {
         textMesh = GetComponent<TMP_Text>();
+        if (is_high_text)
+        {
+            LeanTween.scale(me, new Vector3(3, 3, 1), 0.3f);
+        }
     }
 
     // Update is called once per frame

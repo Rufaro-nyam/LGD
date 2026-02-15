@@ -26,7 +26,11 @@ public class Object_size_random : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        col_part.transform.position = collision.GetContact(0).point;
-        col_part.Play();
+        if (col_part)
+        {
+            col_part.transform.position = collision.GetContact(0).point;
+            col_part.Play();
+        }
+        
     }
 }

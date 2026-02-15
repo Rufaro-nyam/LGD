@@ -19,6 +19,15 @@ public class Add_point : MonoBehaviour
 
     public void start_wait()
     {
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player)
+        {
+            player.TryGetComponent<ShuttleMvt>(out ShuttleMvt shtlmvt);
+            if (shtlmvt)
+            {
+                shtlmvt.add_score(score);
+            }
+        }
         StartCoroutine(wait());
     }
 
@@ -32,15 +41,7 @@ public class Add_point : MonoBehaviour
     public void add_point()
     {
         LeanTween.scale(gameObject, new Vector3(0.0f, 0.0f, 0.0f), 0.2f).setEase(easetype).setOnComplete(gone);
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player)
-        {
-            player.TryGetComponent<ShuttleMvt>(out ShuttleMvt shtlmvt);
-            if (shtlmvt)
-            {
-                shtlmvt.add_score(score);
-            }
-        }
+
     }
 
     public void gone()
